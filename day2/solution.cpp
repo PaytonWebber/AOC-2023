@@ -8,8 +8,8 @@ using namespace std;
 
 bool is_game_valid(istream &game)
 {
-    string word;
     int val;
+    string word;
     while (game >> val >> word)
     {
         if (word == "red," || word == "red;" || word == "red")
@@ -32,22 +32,21 @@ int get_powerset(istream &game)
 {
     map<string, int> mp;
 
-    string word;
     int val;
-
+    string word;
     while (game >> val >> word)
     {
-        if (word == "blue," || word == "blue;" || word == "blue")
-        {
-            if (val > mp["blue"]) { mp["blue"] = val; }
-        }
-        else if (word == "red," || word == "red;" || word == "red")
+        if (word == "red," || word == "red;" || word == "red")
         {
             if (val > mp["red"]) { mp["red"] = val; }
         }
         else if (word == "green," || word == "green;" || word == "green")
         {
             if (val > mp["green"]) { mp["green"] = val; }
+        }
+        else if (word == "blue," || word == "blue;" || word == "blue")
+        {
+            if (val > mp["blue"]) { mp["blue"] = val; }
         }
     }
     return mp["blue"] * mp["red"] * mp["green"];
@@ -73,10 +72,7 @@ void parse_input()
         iss = istringstream(line);
 
         #ifdef PART1
-        if (is_game_valid(iss))
-        {
-            output += game_id;
-        }
+        if (is_game_valid(iss)) { output += game_id; }
         game_id++;
         #endif
 
