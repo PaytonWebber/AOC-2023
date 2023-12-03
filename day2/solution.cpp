@@ -14,15 +14,15 @@ bool is_game_valid(istream &game)
     {
         if (word == "red," || word == "red;" || word == "red")
         {
-            if (val > 12) return false;
+            if (val > 12) { return false; }
         }
         else if (word == "green," || word == "green;" || word == "green")
         {
-            if (val > 13) return false;
+            if (val > 13) { return false; }
         }
         else if (word == "blue," || word == "blue;" || word == "blue")
         {
-            if (val > 14) return false;
+            if (val > 14) { return false; }
         }
     }
     return true;
@@ -39,24 +39,15 @@ int get_powerset(istream &game)
     {
         if (word == "blue," || word == "blue;" || word == "blue")
         {
-            if (val > mp["blue"])
-            {
-                mp["blue"] = val;
-            }
+            if (val > mp["blue"]) { mp["blue"] = val; }
         }
         else if (word == "red," || word == "red;" || word == "red")
         {
-            if (val > mp["red"])
-            {
-                mp["red"] = val;
-            }
+            if (val > mp["red"]) { mp["red"] = val; }
         }
         else if (word == "green," || word == "green;" || word == "green")
         {
-            if (val > mp["green"])
-            {
-                mp["green"] = val;
-            }
+            if (val > mp["green"]) { mp["green"] = val; }
         }
     }
     return mp["blue"] * mp["red"] * mp["green"];
