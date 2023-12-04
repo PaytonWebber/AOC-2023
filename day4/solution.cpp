@@ -14,7 +14,7 @@ public:
     int matches = 0;
 };
 
-int get_card_points(string line)
+Card create_card(string line)
 {
     Card card;
 
@@ -50,6 +50,12 @@ int get_card_points(string line)
         }
     }
 
+    return card;
+}
+
+int get_card_points(Card card)
+{
+
     for (int i = 0; i < card.my_numbers.size(); i++)
     {
         for (int j = 0; j < card.winning_numbers.size(); j++)
@@ -67,17 +73,18 @@ int get_card_points(string line)
 
 void parse_input()
 {
-    int total = 0;
-    int count = 1;
+    int output = 0;
+    int count = 0;
+    Card card;
+
     string line;
     while (getline(cin, line))
     {
-        int temp = get_card_points(line);
-        cout << "Card " << count << " has " << temp << " points." << endl; 
-        total += temp;
         count++;
+        card = create_card(line);
+        output += get_card_points(card);
     }
-    cout << total << endl;
+    cout << output << endl;
 }
 
 int main()
