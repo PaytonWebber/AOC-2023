@@ -14,6 +14,21 @@ public:
     int matches = 0;
 };
 
+void determine_card_matches(Card& card)
+{
+    for (int i = 0; i < card.my_numbers.size(); i++)
+    {
+        for (int j = 0; j < card.winning_numbers.size(); j++)
+        {
+            if (card.my_numbers[i] == card.winning_numbers[j])
+            {
+                card.matches++;
+            }
+        }
+    }
+    return;
+}
+
 Card create_card(string line)
 {
     Card card;
@@ -50,43 +65,16 @@ Card create_card(string line)
         }
     }
 
+    determine_card_matches(card);
     return card;
 }
 
-int get_card_points(Card card)
-{
-    for (int i = 0; i < card.my_numbers.size(); i++)
-    {
-        for (int j = 0; j < card.winning_numbers.size(); j++)
-        {
-            if (card.my_numbers[i] == card.winning_numbers[j])
-            {
-                card.matches++;
-            }
-        }
-    }
-    if (card.matches == 0) { return 0; };
+int get_card_points(Card card) { return pow(2, card.matches - 1); }
 
-    return pow(2, card.matches - 1);
-}
-
-int get_card_copies(int main_card, vector<Card> cards)
+int get_card_copies(const int main_card, const vector<Card>& cards)
 {
     clog << "\rMain card: " << main_card << " " << flush;
 
-    if (cards[main_card].matches == 0)
-    {
-        for (int i = 0; i < cards[main_card].my_numbers.size(); i++)
-        {
-            for (int j = 0; j < cards[main_card].winning_numbers.size(); j++)
-            {
-                if (cards[main_card].my_numbers[i] == cards[main_card].winning_numbers[j])
-                {
-                    cards[main_card].matches++;
-                }
-            }
-        }
-    }
     int copies = 1;
     for (int i = 1; i <= cards[main_card].matches && (main_card + i) < cards.size(); i++)
     {
@@ -121,6 +109,7 @@ void parse_input()
         #endif
 
     }
+
 
     #ifdef PART2
     for (int i = 0; i < cards.size(); i++)
