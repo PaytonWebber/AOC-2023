@@ -40,7 +40,7 @@ const unsigned long long dest_value(const unsigned long long& source, const rang
 
 bool falls_in_range(const unsigned long long& value, const range& r)
 {
-    if(value >= r.source && value <= r.source + r.length)
+    if (value >= r.source && value <= r.source + r.length)
     {
         return true;
     }
@@ -49,13 +49,13 @@ bool falls_in_range(const unsigned long long& value, const range& r)
 
 void traverse_maps(const vector<conversion_map>& maps, vector<seed>& seeds)
 {
-    for(size_t i = 0; i < seeds.size(); i++)
+    for (size_t i = 0; i < seeds.size(); i++)
     {
-        for(size_t j = 0; j < maps.size(); j++)
+        for (size_t j = 0; j < maps.size(); j++)
         {
-            for(size_t k = 0; k < maps[j].mapping.size(); k++)
+            for (size_t k = 0; k < maps[j].mapping.size(); k++)
             {
-                if(falls_in_range(seeds[i].dest_values[j], maps[j].mapping[k]))
+                if (falls_in_range(seeds[i].dest_values[j], maps[j].mapping[k]))
                 {
                     seeds[i].dest_values.push_back(dest_value(seeds[i].dest_values[j], maps[j].mapping[k]));
                     break;
@@ -75,9 +75,9 @@ seed get_lowest_location(const vector<seed>& seeds)
 {
     unsigned long long lowest_location = seeds[0].dest_values[seeds[0].dest_values.size()-1];
     seed lowest_seed = seeds[0];
-    for(size_t i = 0; i < seeds.size(); i++)
+    for (size_t i = 0; i < seeds.size(); i++)
     {
-        if(seeds[i].dest_values[seeds[i].dest_values.size()-1] < lowest_location)
+        if (seeds[i].dest_values[seeds[i].dest_values.size()-1] < lowest_location)
         {
             lowest_location = seeds[i].dest_values[seeds[i].dest_values.size()-1];
             lowest_seed = seeds[i];
@@ -86,15 +86,13 @@ seed get_lowest_location(const vector<seed>& seeds)
     return lowest_seed;
 }
 
-
-
 vector<unsigned long long> get_lowest_range(const vector<unsigned long long>& pairs, const vector<conversion_map>& maps)
 {
     if (pairs.size() == 0) { return {}; }
 
     vector<seed> range_check_seeds;
 
-    for(size_t i = 0; i < pairs.size(); i += 2)
+    for (size_t i = 0; i < pairs.size(); i += 2)
     {
         unsigned long long range_start = pairs[i];
         unsigned long long range_length = pairs[i + 1];
@@ -126,7 +124,7 @@ vector<unsigned long long> get_lowest_range(const vector<unsigned long long>& pa
         unsigned long long range_start = pairs[i];
         unsigned long long range_length = pairs[i + 1];
 
-        if(range_start <= lowest_seed.dest_values[0] && lowest_seed.dest_values[0] <= range_start + range_length )
+        if (range_start <= lowest_seed.dest_values[0] && lowest_seed.dest_values[0] <= range_start + range_length )
         {
             lowest_range.push_back(range_start);
             lowest_range.push_back(range_length);
@@ -152,7 +150,7 @@ void parse_input()
 {
     unsigned long long output;
     vector<conversion_map> maps; 
-    for(int i = 0; i < 7; i++)
+    for (int i = 0; i < 7; i++)
     {
         conversion_map m;
         maps.push_back(m);
@@ -182,7 +180,7 @@ void parse_input()
     unsigned long long range_length;
     while (ss >> token)
     {
-        if(count % 2 == 1)
+        if (count % 2 == 1)
         {
             range_start = stoll(token);
         }
@@ -200,13 +198,13 @@ void parse_input()
     int map_index = -1;
     while (getline(cin, line))
     {
-        if(line == "")
+        if (line == "")
         {
             map_index++;
             continue;
         }
         ss = stringstream(line);
-        if(!isdigit(line[0]))
+        if (!isdigit(line[0]))
         {
             ss >> token;
             maps[map_index].name = token;
@@ -216,15 +214,15 @@ void parse_input()
         range r;
         while (ss >> token)
         {
-            if(i == 0)
+            if (i == 0)
             {
                 r.dest = stoll(token);
             }
-            else if(i == 1)
+            else if (i == 1)
             {
                 r.source = stoll(token);
             }
-            else if(i == 2)
+            else if (i == 2)
             {
                 r.length = stoll(token);
             }
