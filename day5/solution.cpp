@@ -26,14 +26,14 @@ class seed
     vector<int> dest_values; 
 };
 
-unsigned long long dest_value(const unsigned long long& source, const range& r)
+const unsigned long long dest_value(const unsigned long long& source, const range& r)
 {
     unsigned long long offset = source - r.source;
     if(offset < 0) { cout << "ERROR: offset is negative" << endl; }
     return r.dest + offset;
 }
 
-bool falls_in_range(unsigned long long value, range r)
+bool falls_in_range(const unsigned long long& value, const range& r)
 {
     if(value >= r.source && value <= r.source + r.length)
     {
@@ -66,7 +66,7 @@ void traverse_maps(const vector<map>& maps, vector<seed>& seeds)
     return;
 }
 
-unsigned long long get_lowest_location(const vector<seed>& seeds)
+const unsigned long long get_lowest_location(const vector<seed>& seeds)
 {
     unsigned long long lowest_location = seeds[0].dest_values[seeds[0].dest_values.size()-1];
     for(int i = 0; i < seeds.size(); i++)
