@@ -272,17 +272,11 @@ void parse_input()
             seeds.push_back(s);
         }
     }
+    #endif
 
     traverse_maps(maps, seeds);
     seed lowest_seed = get_lowest_location(seeds);
     output = lowest_seed.dest_values[lowest_seed.dest_values.size()-1];
-    #endif
-
-    #ifdef PART1
-    traverse_maps(maps, seeds);
-    seed lowest_seed = get_lowest_location(seeds);
-    output = lowest_seed.dest_values[lowest_seed.dest_values.size()-1];
-    #endif
 
     cout << output << endl;
 
