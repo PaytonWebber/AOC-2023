@@ -42,7 +42,7 @@ bool falls_in_range(unsigned long long value, range r)
     return false;
 }
 
-unsigned long long get_lowest_location(const vector<map>& maps, vector<seed>& seeds)
+void traverse_maps(const vector<map>& maps, vector<seed>& seeds)
 {
     for(int i = 0; i < seeds.size(); i++)
     {
@@ -63,9 +63,13 @@ unsigned long long get_lowest_location(const vector<map>& maps, vector<seed>& se
             }
         }
     }
+    return;
+}
 
+unsigned long long get_lowest_location(const vector<seed>& seeds)
+{
     unsigned long long lowest_location = seeds[0].dest_values[seeds[0].dest_values.size()-1];
-    for(int i = 1; i < seeds.size(); i++)
+    for(int i = 0; i < seeds.size(); i++)
     {
         if(seeds[i].dest_values[seeds[i].dest_values.size()-1] < lowest_location)
         {
@@ -134,7 +138,8 @@ void parse_input()
         maps[map_index].mapping.push_back(r);
     }
 
-    unsigned long long output = get_lowest_location(maps, seeds);
+    traverse_maps(maps, seeds);
+    unsigned long long output = get_lowest_location(seeds);
     cout << output << endl;
 
     return;
