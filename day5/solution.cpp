@@ -123,7 +123,7 @@ const vector<unsigned long long> get_lowest_range(const vector<unsigned long lon
 
     new_pairs.push_back(lowest_range[0]);
     new_pairs.push_back(new_range_length);
-    new_pairs.push_back(lowest_range[0] + new_range_length + 1); // NOTE: do I need to add 1 here?
+    new_pairs.push_back(lowest_range[0] + new_range_length + 1);
     new_pairs.push_back(new_range_length);
 
     return get_lowest_range(new_pairs, maps);
