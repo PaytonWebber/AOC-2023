@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
-#include <map>
+#include <chrono>
 
 using namespace std;
 
@@ -88,8 +88,6 @@ seed get_lowest_location(const vector<seed>& seeds)
 
 vector<unsigned long long> get_lowest_range(const vector<unsigned long long>& pairs, const vector<conversion_map>& maps)
 {
-    if (pairs.size() == 0) { return {}; }
-
     vector<seed> range_check_seeds;
 
     for (size_t i = 0; i < pairs.size(); i += 2)
@@ -98,16 +96,11 @@ vector<unsigned long long> get_lowest_range(const vector<unsigned long long>& pa
         unsigned long long range_length = pairs[i + 1];
 
         unsigned long long top_of_range = range_start + range_length - 1;
-        unsigned long long middle_of_range = range_start + range_length / 2;
         unsigned long long bottom_of_range = range_start;
 
         seed s_top;
         s_top.dest_values.push_back(top_of_range);
         range_check_seeds.push_back(s_top);
-
-        seed s_middle;
-        s_middle.dest_values.push_back(middle_of_range);
-        range_check_seeds.push_back(s_middle);
 
         seed s_bottom;
         s_bottom.dest_values.push_back(bottom_of_range);
@@ -131,12 +124,10 @@ vector<unsigned long long> get_lowest_range(const vector<unsigned long long>& pa
         }
     }
 
-    if (lowest_range.size() == 0) { return {}; }
+    unsigned long long new_range_length = lowest_range[1] / 2;
+    if (new_range_length < 1) { return lowest_range; }
 
     vector<unsigned long long> new_pairs;
-    unsigned long long new_range_length = lowest_range[1] / 2;
-
-    if (new_range_length < 1) { return lowest_range; }
 
     new_pairs.push_back(lowest_range[0]);
     new_pairs.push_back(new_range_length);
@@ -285,6 +276,13 @@ void parse_input()
 
 int main()
 {
+    auto start = chrono::high_resolution_clock::now();
+
     parse_input();
+
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
+    clog << "Time: " << duration.count() << "ms" << endl;
+
     return 0;
 }
