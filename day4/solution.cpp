@@ -2,13 +2,14 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <chrono>
 #include <math.h>
 
 using namespace std;
 
 class Card
 {
-public:
+    public:
     vector<int> winning_numbers;
     vector<int> my_numbers;
     int matches = 0;
@@ -16,9 +17,9 @@ public:
 
 void determine_card_matches(Card& card)
 {
-    for (int i = 0; i < card.my_numbers.size(); i++)
+    for (size_t i = 0; i < card.my_numbers.size(); i++)
     {
-        for (int j = 0; j < card.winning_numbers.size(); j++)
+        for (size_t j = 0; j < card.winning_numbers.size(); j++)
         {
             if (card.my_numbers[i] == card.winning_numbers[j])
             {
@@ -45,7 +46,7 @@ Card create_card(string line)
             continue;
         }
 
-        for (int i = 0; i < token.length(); i++)
+        for (unsigned long i = 0; i < token.length(); i++)
         {
             if (!isdigit(token[i]))
             {
@@ -55,14 +56,8 @@ Card create_card(string line)
         }
         if (!is_number) { continue; }
 
-        if (winner_side)
-        {
-            card.winning_numbers.push_back(stoi(token));
-        }
-        else
-        {
-            card.my_numbers.push_back(stoi(token));
-        }
+        if (winner_side) { card.winning_numbers.push_back(stoi(token)); }
+        else { card.my_numbers.push_back(stoi(token)); }
     }
 
     determine_card_matches(card);
@@ -76,7 +71,7 @@ int get_card_copies(const int main_card, const vector<Card>& cards)
     clog << "\rMain card: " << main_card << " " << flush;
 
     int copies = 1;
-    for (int i = 1; i <= cards[main_card].matches && (main_card + i) < cards.size(); i++)
+    for (size_t i = 1; i <= (unsigned long)cards[main_card].matches && (main_card + i) < cards.size(); i++)
     {
         copies += get_card_copies(main_card + i, cards);
     }
@@ -107,22 +102,28 @@ void parse_input()
         #ifdef PART1
         output += get_card_points(card);
         #endif
-
     }
 
-
     #ifdef PART2
-    for (int i = 0; i < cards.size(); i++)
+    for (size_t i = 0; i < cards.size(); i++)
     {
         output += get_card_copies(i, cards);
     }
     #endif
 
+    cout << endl;
     cout << output << endl;
 }
 
 int main()
 {
+    auto start = chrono::steady_clock::now();
+
     parse_input();
+
+    auto end = chrono::steady_clock::now();
+    auto duration = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+    clog << "Time: " << duration << " ms" << endl;
+
     return 0;
 }
