@@ -17,7 +17,6 @@ class range
 class conversion_map
 {
     public:
-    string name;
     vector<range> mapping;
 };
 
@@ -29,22 +28,12 @@ class seed
 
 const unsigned long long dest_value(const unsigned long long& source, const range& r)
 {
-    unsigned long long offset = source - r.source;
-    if (offset > r.length)
-    {
-        clog << "Offset is greater than range length" << endl;
-        return 0;
-    }
-    return r.dest + offset;
+    return r.dest + (source - r.source);
 }
 
 bool falls_in_range(const unsigned long long& value, const range& r)
 {
-    if (value >= r.source && value <= r.source + r.length)
-    {
-        return true;
-    }
-    return false;
+    return (value >= r.source && value <= r.source + r.length);
 }
 
 void traverse_maps(const vector<conversion_map>& maps, vector<seed>& seeds)
@@ -140,20 +129,18 @@ vector<unsigned long long> get_lowest_range(const vector<unsigned long long>& pa
 void parse_input()
 {
     unsigned long long output;
+    vector<seed> seeds;
+
     vector<conversion_map> maps; 
-    for (int i = 0; i < 7; i++)
-    {
-        conversion_map m;
-        maps.push_back(m);
-    }
-    
+    maps.reserve(7);
+    for (int i = 0; i < 7; i++){ maps.push_back(conversion_map()); }
+
     string line;
     getline(cin, line);
     line = line.substr(7, line.length()-7);
     stringstream ss(line);
 
     #ifdef PART1
-    vector<seed> seeds;
     string token;
     while (ss >> token)
     {
@@ -171,10 +158,7 @@ void parse_input()
     unsigned long long range_length;
     while (ss >> token)
     {
-        if (count % 2 == 1)
-        {
-            range_start = stoll(token);
-        }
+        if (count % 2 == 1) { range_start = stoll(token); }
         else
         {
             range_length = stoll(token);
@@ -194,37 +178,21 @@ void parse_input()
             map_index++;
             continue;
         }
-        ss = stringstream(line);
-        if (!isdigit(line[0]))
-        {
-            ss >> token;
-            maps[map_index].name = token;
-            continue;
-        }
-        int i = 0;
+
+        if (!isdigit(line[0])) { continue; }
+
+        stringstream ss(line);
+
         range r;
-        while (ss >> token)
-        {
-            if (i == 0)
-            {
-                r.dest = stoll(token);
-            }
-            else if (i == 1)
-            {
-                r.source = stoll(token);
-            }
-            else if (i == 2)
-            {
-                r.length = stoll(token);
-            }
-            i++;
-        }
+        ss >> r.dest >> r.source >> r.length;
         maps[map_index].mapping.push_back(r);
     }
 
     #ifdef PART2
-    vector<unsigned long long> resized_pairs;
     vector<unsigned long long> new_pairs;
+    vector<unsigned long long> resized_pairs;
+    resized_pairs.reserve(pairs.size());
+
     for (size_t i = 0; i < pairs.size(); i += 2)
     {
 
@@ -248,12 +216,8 @@ void parse_input()
             resized_pairs.push_back(range_start);
             resized_pairs.push_back(range_length);
         }
-
-        new_pairs.clear();
     }
 
-    vector<seed> seeds;
-    seeds.clear();
     for (size_t i = 0; i < resized_pairs.size(); i += 2)
     {
         for (unsigned long long j = resized_pairs[i]; j < resized_pairs[i] + resized_pairs[i + 1]; j++)
