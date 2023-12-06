@@ -109,9 +109,9 @@ void parse_input()
     {
         output += get_card_copies(i, cards);
     }
+    cout << endl;
     #endif
 
-    cout << endl;
     cout << output << endl;
 }
 
