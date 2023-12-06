@@ -1,8 +1,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <map>
 #include <algorithm>
+#include <chrono>
+#include <map>
 
 using namespace std;
 
@@ -150,10 +151,8 @@ void parse_input()
         for (int j = 0; j < symbols_idx[i].size(); j++)
         {
             vector<vector<int>> adjacent_indices = get_adjacent_indices(i, symbols_idx[i][j]);
-            for (const auto& adjacent_index : adjacent_indices)
-            {
-                valid_indices.push_back(adjacent_index);
-            }
+
+            for (const auto& adjacent_index : adjacent_indices) { valid_indices.push_back(adjacent_index); }
         }
     }
     #endif
@@ -171,6 +170,12 @@ void parse_input()
 
 int main()
 {
+    auto start = chrono::high_resolution_clock::now();
+
     parse_input();
+
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
+    cout << duration.count() << "ms" << endl;
     return 0;
 }
