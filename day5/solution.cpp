@@ -31,7 +31,7 @@ const unsigned long long dest_value(const unsigned long long& source, const rang
     return r.dest + (source - r.source);
 }
 
-bool falls_in_range(const unsigned long long& value, const range& r)
+const bool falls_in_range(const unsigned long long& value, const range& r)
 {
     return (value >= r.source && value <= r.source + r.length);
 }
@@ -52,7 +52,6 @@ void traverse_maps(const vector<conversion_map>& maps, vector<seed>& seeds)
                 else if (k == maps[j].mapping.size() - 1)
                 {
                     seeds[i].dest_values.push_back(seeds[i].dest_values[j]);
-                    break;
                 }
             }
         }
@@ -60,7 +59,7 @@ void traverse_maps(const vector<conversion_map>& maps, vector<seed>& seeds)
     return;
 }
 
-seed get_lowest_location(const vector<seed>& seeds)
+const seed get_lowest_location(const vector<seed>& seeds)
 {
     unsigned long long lowest_location = seeds[0].dest_values[seeds[0].dest_values.size()-1];
     seed lowest_seed = seeds[0];
@@ -75,9 +74,10 @@ seed get_lowest_location(const vector<seed>& seeds)
     return lowest_seed;
 }
 
-vector<unsigned long long> get_lowest_range(const vector<unsigned long long>& pairs, const vector<conversion_map>& maps)
+const vector<unsigned long long> get_lowest_range(const vector<unsigned long long>& pairs, const vector<conversion_map>& maps)
 {
     vector<seed> range_check_seeds;
+    range_check_seeds.reserve(4);
 
     for (size_t i = 0; i < pairs.size(); i += 2)
     {
@@ -101,6 +101,8 @@ vector<unsigned long long> get_lowest_range(const vector<unsigned long long>& pa
     seed lowest_seed = get_lowest_location(range_check_seeds);
 
     vector<unsigned long long> lowest_range;
+    lowest_range.reserve(2);
+
     for (size_t i = 0; i < pairs.size(); i += 2)
     {
         unsigned long long range_start = pairs[i];
@@ -117,6 +119,7 @@ vector<unsigned long long> get_lowest_range(const vector<unsigned long long>& pa
     if (new_range_length < 1) { return lowest_range; }
 
     vector<unsigned long long> new_pairs;
+    new_pairs.reserve(4);
 
     new_pairs.push_back(lowest_range[0]);
     new_pairs.push_back(new_range_length);
@@ -126,78 +129,18 @@ vector<unsigned long long> get_lowest_range(const vector<unsigned long long>& pa
     return get_lowest_range(new_pairs, maps);
 }
 
-void parse_input()
+vector<seed> get_lowest_seeds(const vector<unsigned long long>& og_pairs, const vector<conversion_map>& maps)
 {
-    unsigned long long output;
-    vector<seed> seeds;
-
-    vector<conversion_map> maps; 
-    maps.reserve(7);
-    for (int i = 0; i < 7; i++){ maps.push_back(conversion_map()); }
-
-    string line;
-    getline(cin, line);
-    line = line.substr(7, line.length()-7);
-    stringstream ss(line);
-
-    #ifdef PART1
-    string token;
-    while (ss >> token)
-    {
-        seed s;
-        s.dest_values.push_back(stoll(token));
-        seeds.push_back(s);
-    }
-    #endif
-
-    #ifdef PART2
-    int count = 1;
-    string token;
-    vector<unsigned long long> pairs;
-    unsigned long long range_start;
-    unsigned long long range_length;
-    while (ss >> token)
-    {
-        if (count % 2 == 1) { range_start = stoll(token); }
-        else
-        {
-            range_length = stoll(token);
-            pairs.push_back(range_start);
-            pairs.push_back(range_length);
-        }
-        count++;
-    }
-    #endif
-
-
-    int map_index = -1;
-    while (getline(cin, line))
-    {
-        if (line == "")
-        {
-            map_index++;
-            continue;
-        }
-
-        if (!isdigit(line[0])) { continue; }
-
-        stringstream ss(line);
-
-        range r;
-        ss >> r.dest >> r.source >> r.length;
-        maps[map_index].mapping.push_back(r);
-    }
-
-    #ifdef PART2
     vector<unsigned long long> new_pairs;
+    new_pairs.reserve(4);
     vector<unsigned long long> resized_pairs;
-    resized_pairs.reserve(pairs.size());
+    resized_pairs.reserve(10);
 
-    for (size_t i = 0; i < pairs.size(); i += 2)
+    for (size_t i = 0; i < og_pairs.size(); i += 2)
     {
 
-        unsigned long long range_start = pairs[i];
-        unsigned long long range_length = pairs[i + 1];
+        unsigned long long range_start = og_pairs[i];
+        unsigned long long range_length = og_pairs[i + 1];
 
         unsigned long long new_range_length = range_length / 2;
 
@@ -218,6 +161,7 @@ void parse_input()
         }
     }
 
+    vector<seed> seeds;
     for (size_t i = 0; i < resized_pairs.size(); i += 2)
     {
         for (unsigned long long j = resized_pairs[i]; j < resized_pairs[i] + resized_pairs[i + 1]; j++)
@@ -227,6 +171,71 @@ void parse_input()
             seeds.push_back(s);
         }
     }
+    return seeds;
+}
+
+void parse_input()
+{
+    unsigned long long output;
+    vector<seed> seeds;
+
+    vector<conversion_map> maps; 
+    maps.reserve(7);
+    for (int i = 0; i < 7; i++){ maps.push_back(conversion_map()); }
+
+    string line;
+    getline(cin, line);
+    line = line.substr(7, line.length()-7);
+    stringstream ss(line);
+    string token;
+
+    #ifdef PART1
+    while (ss >> token)
+    {
+        seed s;
+        s.dest_values.push_back(stoll(token));
+        seeds.push_back(s);
+    }
+    #endif
+
+    #ifdef PART2
+    int count = 1;
+    vector<unsigned long long> pairs;
+    unsigned long long range_start;
+    unsigned long long range_length;
+    while (ss >> token)
+    {
+        if (count % 2 == 1) { range_start = stoll(token); }
+        else
+        {
+            range_length = stoll(token);
+            pairs.push_back(range_start);
+            pairs.push_back(range_length);
+        }
+        count++;
+    }
+    #endif
+
+    int map_index = -1;
+    while (getline(cin, line))
+    {
+        if (line == "")
+        {
+            map_index++;
+            continue;
+        }
+
+        if (!isdigit(line[0])) { continue; }
+
+        stringstream ss(line);
+
+        range r;
+        ss >> r.dest >> r.source >> r.length;
+        maps[map_index].mapping.push_back(r);
+    }
+
+    #ifdef PART2
+    seeds = get_lowest_seeds(pairs, maps);
     #endif
 
     traverse_maps(maps, seeds);
