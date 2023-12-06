@@ -2,11 +2,12 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
+#include <chrono>
 #include <map>
 
 using namespace std;
 
-bool is_game_valid(istream &game)
+const bool is_game_valid(istream &game)
 {
     int val;
     string word;
@@ -28,7 +29,7 @@ bool is_game_valid(istream &game)
     return true;
 }
 
-int get_powerset(istream &game)
+const int get_powerset(istream &game)
 {
     map<string, int> mp;
 
@@ -55,7 +56,10 @@ int get_powerset(istream &game)
 void parse_input()
 {
     int output = 0;
+
+    #ifdef PART1
     int game_id = 1;
+    #endif
 
     string line;
     string temp;
@@ -85,6 +89,13 @@ void parse_input()
 
 int main()
 {
+    auto start = chrono::high_resolution_clock::now();
+
     parse_input();
+
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
+    clog << "Time: " << duration.count() << " ms" << endl;
+
     return 0;
 }
