@@ -1,11 +1,12 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <chrono>
 #include <map>
 
 using namespace std;
 
-int word_to_digit(string word)
+const int word_to_digit(const string& word)
 {
     map<string, int> digit_map;
     digit_map["one"] = 1;
@@ -18,17 +19,14 @@ int word_to_digit(string word)
     digit_map["eight"] = 8;
     digit_map["nine"] = 9;
 
-    if (digit_map.find(word) != digit_map.end())
-    {
-        return digit_map[word];
-    }
+    if (digit_map.find(word) != digit_map.end()) { return digit_map[word]; }
     return -1;
 }
 
-int get_calibration_value(string line)
+const int get_calibration_value(const string& line)
 {
     string calibration_value = "";
-    for (int i = 0; i < line.length(); i++)
+    for (size_t i = 0; i < line.length(); i++)
     {
         if (isdigit(line[i]))
         {
@@ -37,7 +35,7 @@ int get_calibration_value(string line)
         }
 
         #ifdef PART2
-        for (int j = 3; j <= 5 && (i + j) < line.length(); j++)
+        for (size_t j = 3; j <= 5 && (i + j) < line.length(); j++)
         {
             int digit = word_to_digit(line.substr(i, j));
             if (digit != -1)
@@ -79,15 +77,20 @@ void parse_input()
 {
     int output = 0;
     string line; 
-    while (getline(cin, line))
-    {
-        output += get_calibration_value(line);
-    }
+    while (getline(cin, line)) { output += get_calibration_value(line); }
+
     cout << output << endl;
 }
 
 int main()
 {
+    auto start = chrono::steady_clock::now();
+
     parse_input();
+
+    auto end = chrono::steady_clock::now();
+    auto duration = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+    cout << "Time taken: " << duration << "ms" << endl;
+    
     return 0;
 }
