@@ -57,10 +57,7 @@ vector<hand> get_ordered_hands(vector<hand> &hands)
     ordered_hands.reserve(hands.size());
     for (const auto& h : hands)
     {
-        if (ordered_hands.size() == 0)
-        {
-            ordered_hands.push_back(h);
-        }
+        if (ordered_hands.size() == 0) { ordered_hands.push_back(h); }
         else
         {
             bool insert = false;
@@ -86,11 +83,10 @@ vector<hand> get_ordered_hands(vector<hand> &hands)
     return ordered_hands;
 }
 
-vector<hand> get_strength(vector<hand> &hands)
+void get_strength(vector<hand> &hands)
 {
-    vector<hand> hands_with_strength;
     map<char, int> card_count;
-    for (auto h : hands)
+    for (auto& h : hands)
     {
         #ifdef PART2
         int num_jokers = 0;
@@ -110,10 +106,7 @@ vector<hand> get_strength(vector<hand> &hands)
                 card_count[h.cards[i]] = 1;
             }
             #endif
-            else
-            {
-                card_count[h.cards[i]]++;
-            }
+            else { card_count[h.cards[i]]++; }
         }
 
         #ifdef PART2
@@ -170,10 +163,8 @@ vector<hand> get_strength(vector<hand> &hands)
         else { h.strength = 1; }
 
         card_count.clear();
-        hands_with_strength.push_back(h);
     }
-
-    return hands_with_strength;
+    return;
 }
 
 void parse_input()
@@ -191,9 +182,9 @@ void parse_input()
         h.bid = stoi(card);
         hands.push_back(h);
     }
-    vector<hand> strength_hands = get_strength(hands);
+    get_strength(hands);
 
-    vector<hand> ordered_hands = get_ordered_hands(strength_hands);
+    vector<hand> ordered_hands = get_ordered_hands(hands);
 
     int output = 0;
     for (size_t i = 0; i < ordered_hands.size(); i++)
