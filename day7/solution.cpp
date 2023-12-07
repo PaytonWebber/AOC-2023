@@ -2,8 +2,9 @@
 #include <vector>
 #include <sstream>
 #include <string>
-#include <map>
 #include <algorithm>
+#include <chrono>
+#include <map>
 
 using namespace std;
 
@@ -11,13 +12,12 @@ class hand
 {
     public:
     string cards;
-    unsigned long bid;
-    string strength;
+    int bid;
+    int strength;
 };
 
-vector<hand> get_ordered_hands(vector<hand> &hands)
+bool operator>(const hand &h1, const hand& h2)
 {
-
     map<char, int> card_strength;
     card_strength['A'] = 14;
     card_strength['K'] = 13;
@@ -37,8 +37,25 @@ vector<hand> get_ordered_hands(vector<hand> &hands)
     card_strength['3'] = 3;
     card_strength['2'] = 2;
 
+    for (int i = 0; i < 5; i++)
+    {
+        if (card_strength[h1.cards[i]] > card_strength[h2.cards[i]])
+        {
+            return true;
+        }
+        else if (card_strength[h1.cards[i]] < card_strength[h2.cards[i]])
+        {
+            return false;
+        }
+    }
+    return false;
+}
+
+vector<hand> get_ordered_hands(vector<hand> &hands)
+{
     vector<hand> ordered_hands;
-    for (auto h : hands)
+    ordered_hands.reserve(hands.size());
+    for (const auto& h : hands)
     {
         if (ordered_hands.size() == 0)
         {
@@ -46,224 +63,26 @@ vector<hand> get_ordered_hands(vector<hand> &hands)
         }
         else
         {
-            bool inserted = false;
-            for (size_t i = 0; i < ordered_hands.size(); i++)
+            bool insert = false;
+            for (size_t i = ordered_hands.size() - 1; i >= 0; i--)
             {
-                if (inserted)
+                if (h.strength >= ordered_hands[i].strength)
                 {
+                    if (h.strength == ordered_hands[i].strength)
+                    {
+                        if (h > ordered_hands[i]) { insert = true; }
+                    }
+                    else { insert = true; }
+                }
+                if (insert)
+                {
+                    ordered_hands.insert(ordered_hands.begin() + i + 1, h);
                     break;
                 }
-                if (h.strength == "Five of a Kind")
-                {
-                   if (ordered_hands[i].strength == "Five of a Kind")
-                   {
-                       for (int j = 0; j < 5; j++)
-                       {
-                           if (card_strength[h.cards[j]] > card_strength[ordered_hands[i].cards[j]])
-                           {
-                               ordered_hands.insert(ordered_hands.begin() + i, h);
-                               inserted = true;
-
-                               break;
-                           }
-                           else if (card_strength[h.cards[j]] < card_strength[ordered_hands[i].cards[j]])
-                           {
-                               break;
-                           }
-                       }
-                   }
-                   else
-                   {
-                       ordered_hands.insert(ordered_hands.begin() + i, h);
-                       inserted = true;
-                       break;
-                   } 
-                }
-                else if (h.strength == "Four of a Kind")
-                {
-                    if (ordered_hands[i].strength == "Five of a Kind")
-                    {
-                        continue;
-                    }
-                    else if (ordered_hands[i].strength == "Four of a Kind")
-                    {
-                        for (int j = 0; j < 5; j++)
-                        {
-                            if (card_strength[h.cards[j]] > card_strength[ordered_hands[i].cards[j]])
-                            {
-                                ordered_hands.insert(ordered_hands.begin() + i, h);
-                                inserted = true;
-                                break;
-                            }
-                            else if (card_strength[h.cards[j]] < card_strength[ordered_hands[i].cards[j]])
-                            {
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        ordered_hands.insert(ordered_hands.begin() + i, h);
-                        inserted = true;
-                        break;
-                    }
-                }
-                else if (h.strength == "Full House")
-                {
-                    if (ordered_hands[i].strength == "Five of a Kind" || ordered_hands[i].strength == "Four of a Kind")
-                    {
-                        continue;
-                    }
-                    else if (ordered_hands[i].strength == "Full House")
-                    {
-                        for (int j = 0; j < 5; j++)
-                        {
-                            if (card_strength[h.cards[j]] > card_strength[ordered_hands[i].cards[j]])
-                            {
-                                ordered_hands.insert(ordered_hands.begin() + i, h);
-                                inserted = true;
-                                break;
-                            }
-                            else if (card_strength[h.cards[j]] < card_strength[ordered_hands[i].cards[j]])
-                            {
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        ordered_hands.insert(ordered_hands.begin() + i, h);
-                        inserted = true;
-                        break;
-                    }
-                }
-                else if (h.strength == "Three of a Kind")
-                {
-                    if (ordered_hands[i].strength == "Five of a Kind" || ordered_hands[i].strength == "Four of a Kind" || ordered_hands[i].strength == "Full House")
-                    {
-                        continue;
-                    }
-                    else if (ordered_hands[i].strength == "Three of a Kind")
-                    {
-                        for (int j = 0; j < 5; j++)
-                        {
-                            if (card_strength[h.cards[j]] > card_strength[ordered_hands[i].cards[j]])
-                            {
-                                ordered_hands.insert(ordered_hands.begin() + i, h);
-                                inserted = true;
-                                break;
-                            }
-                            else if (card_strength[h.cards[j]] < card_strength[ordered_hands[i].cards[j]])
-                            {
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        ordered_hands.insert(ordered_hands.begin() + i, h);
-                        inserted = true;
-                        break;
-                    }
-                }
-                else if (h.strength == "Two Pair")
-                {
-
-                    if (ordered_hands[i].strength == "Five of a Kind" || ordered_hands[i].strength == "Four of a Kind" || ordered_hands[i].strength == "Full House" || ordered_hands[i].strength == "Three of a Kind")
-                    {
-                        continue;
-                    }
-                    else if (ordered_hands[i].strength == "Two Pair")
-                    {
-                        for (int j = 0; j < 5; j++)
-                        {
-                            if (card_strength[h.cards[j]] > card_strength[ordered_hands[i].cards[j]])
-                            {
-                                ordered_hands.insert(ordered_hands.begin() + i, h);
-                                inserted = true;
-                                break;
-                            }
-                            else if (card_strength[h.cards[j]] < card_strength[ordered_hands[i].cards[j]])
-                            {
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        ordered_hands.insert(ordered_hands.begin() + i, h);
-                        inserted = true;
-                        break;
-                    }
-                }
-                else if (h.strength == "One Pair")
-                {
-                    if (ordered_hands[i].strength == "Five of a Kind" || ordered_hands[i].strength == "Four of a Kind" || ordered_hands[i].strength == "Full House" || ordered_hands[i].strength == "Three of a Kind" || ordered_hands[i].strength == "Two Pair")
-                    {
-                        continue;
-                    }
-                    else if (ordered_hands[i].strength == "One Pair")
-                    {
-                        for (int j = 0; j < 5; j++)
-                        {
-                            if (card_strength[h.cards[j]] > card_strength[ordered_hands[i].cards[j]])
-                            {
-                                ordered_hands.insert(ordered_hands.begin() + i, h);
-                                inserted = true;
-                                break;
-                            }
-                            else if (card_strength[h.cards[j]] < card_strength[ordered_hands[i].cards[j]])
-                            {
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        ordered_hands.insert(ordered_hands.begin() + i, h);
-                        inserted = true;
-                        break;
-                    }
-                }
-                else if (h.strength == "High Card")
-                {
-                    if (ordered_hands[i].strength == "Five of a Kind" || ordered_hands[i].strength == "Four of a Kind" || ordered_hands[i].strength == "Full House" || ordered_hands[i].strength == "Three of a Kind" || ordered_hands[i].strength == "Two Pair" || ordered_hands[i].strength == "One Pair")
-                    {
-                        continue;
-                    }
-                    else if (ordered_hands[i].strength == "High Card")
-                    {
-                        for (int j = 0; j < 5; j++)
-                        {
-                            if (card_strength[h.cards[j]] > card_strength[ordered_hands[i].cards[j]])
-                            {
-                                ordered_hands.insert(ordered_hands.begin() + i, h);
-                                inserted = true;
-                                break;
-                            }
-                            else if (card_strength[h.cards[j]] < card_strength[ordered_hands[i].cards[j]])
-                            {
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        ordered_hands.insert(ordered_hands.begin() + i, h);
-                        inserted = true;
-                        break;
-                    }
-                }
             }
-            if (!inserted)
-            {
-                ordered_hands.push_back(h);
-            }
+            if (!insert) { ordered_hands.insert(ordered_hands.begin(), h); }
         }
     }
-
-    // I did it the wrong way and relized too late...
-    reverse(ordered_hands.begin(), ordered_hands.end());
     return ordered_hands;
 }
 
@@ -276,13 +95,10 @@ vector<hand> get_strength(vector<hand> &hands)
         #ifdef PART2
         int num_jokers = 0;
         #endif
-        for (unsigned long i = 0; i < 5; i++)
+        for (int i = 0; i < 5; i++)
         {
             #ifdef PART2
-            if (h.cards[i] == 'J')
-            {
-                num_jokers++;
-            }
+            if (h.cards[i] == 'J') { num_jokers++; }
 
             else if (card_count.find(h.cards[i]) == card_count.end())
             {
@@ -305,7 +121,7 @@ vector<hand> get_strength(vector<hand> &hands)
         {
             int max_count = 0;
             char max_card;
-            for (auto c : card_count)
+            for (const auto& c : card_count)
             {
                 if (c.second > max_count)
                 {
@@ -317,22 +133,19 @@ vector<hand> get_strength(vector<hand> &hands)
         }
         #endif
 
-        if (card_count.size() == 1)
-        {
-            h.strength = "Five of a Kind";
-        }
+        if (card_count.size() == 1) { h.strength = 7; }
         else if (card_count.size() == 2)
         {
             for (int i = 0; i < 5; i++)
             {
                 if (card_count[h.cards[i]] == 4)
                 {
-                    h.strength = "Four of a Kind";
+                    h.strength = 6;
                     break;
                 }
                 else if (card_count[h.cards[i]] == 3)
                 {
-                    h.strength = "Full House";
+                    h.strength = 5;
                     break;
                 }
             }
@@ -343,24 +156,19 @@ vector<hand> get_strength(vector<hand> &hands)
             {
                 if (card_count[h.cards[i]] == 3)
                 {
-                    h.strength = "Three of a Kind";
+                    h.strength = 4;
                     break;
                 }
                 else if (card_count[h.cards[i]] == 2)
                 {
-                    h.strength = "Two Pair";
+                    h.strength = 3;
                     break;
                 }
             }
         }
-        else if (card_count.size() == 4)
-        {
-            h.strength = "One Pair";
-        }
-        else
-        {
-            h.strength = "High Card";
-        }
+        else if (card_count.size() == 4) { h.strength = 2; }
+        else { h.strength = 1; }
+
         card_count.clear();
         hands_with_strength.push_back(h);
     }
@@ -380,14 +188,14 @@ void parse_input()
         ss >> card;
         h.cards = card;
         ss >> card;
-        h.bid = stol(card);
+        h.bid = stoi(card);
         hands.push_back(h);
     }
     vector<hand> strength_hands = get_strength(hands);
 
     vector<hand> ordered_hands = get_ordered_hands(strength_hands);
 
-    unsigned long output = 0;
+    int output = 0;
     for (size_t i = 0; i < ordered_hands.size(); i++)
     {
         output += ordered_hands[i].bid * (i + 1);
@@ -397,6 +205,13 @@ void parse_input()
 
 int main()
 {
+    auto start = chrono::high_resolution_clock::now();
+
     parse_input();
+
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
+    cout << duration.count() << "ms" << endl;
+
     return 0;
 }
