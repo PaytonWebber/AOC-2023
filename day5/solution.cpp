@@ -79,10 +79,13 @@ const vector<unsigned long long> get_lowest_range(const vector<unsigned long lon
     vector<seed> range_check_seeds;
     range_check_seeds.reserve(4);
 
+    unsigned long long range_start;
+    unsigned long long range_length;
+
     for (size_t i = 0; i < pairs.size(); i += 2)
     {
-        unsigned long long range_start = pairs[i];
-        unsigned long long range_length = pairs[i + 1];
+        range_start = pairs[i];
+        range_length = pairs[i + 1];
 
         unsigned long long top_of_range = range_start + range_length - 1;
         unsigned long long bottom_of_range = range_start;
@@ -105,8 +108,8 @@ const vector<unsigned long long> get_lowest_range(const vector<unsigned long lon
 
     for (size_t i = 0; i < pairs.size(); i += 2)
     {
-        unsigned long long range_start = pairs[i];
-        unsigned long long range_length = pairs[i + 1];
+        range_start = pairs[i];
+        range_length = pairs[i + 1];
 
         if (range_start <= lowest_seed.dest_values[0] && lowest_seed.dest_values[0] <= range_start + range_length )
         {
