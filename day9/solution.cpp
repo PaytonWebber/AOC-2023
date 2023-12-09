@@ -2,8 +2,8 @@
 #include <vector>
 #include <algorithm>
 #include <string>
-#include <map>
 #include <sstream>
+#include <chrono>
 
 using namespace std;
 
@@ -114,6 +114,13 @@ void parse_input()
 
 int main()
 {
+    auto start = chrono::high_resolution_clock::now();
+
     parse_input();
+
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
+    cout << duration.count() << "ms" << endl;
+
     return 0;
 }
